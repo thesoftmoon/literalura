@@ -17,7 +17,7 @@ public class LiteraluraApplication implements CommandLineRunner{
 	}
 
 
-	//Create the Author object and the table for the db, then un comment the row creation in Book object line 15 and 16
+	//Create the Author object and the table for the db, then uncomment the row creation in Book object line 15 and 16
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("Main app loaded");

@@ -17,18 +17,15 @@ public class Principal {
     //private List<Serie> series;
     //Optional<Serie> searchedSerie;
 
+
     Scanner keyboard = new Scanner(System.in);
     Boolean exit = false;
     String options = """
-            1- Buscar series
-            2- Buscar episodios
-            3- Mostrar series buscadas
-            4- Buscar serie por titulo
-            5- Buscar Top 5 Series mejor evaluadas
-            6- Buscar series por categoria
-            7- Filtrar series por temporadas y evaluación
-            8- Buscar episodios por nombre
-            9- Buscar mejores 5 episodios de una serie
+            1- Buscar libro por titulo
+            2- Listar libros registrados
+            3- Listar autores registrados
+            4- Listar autores vivos en determinado año
+            5- Listar libros por idioma
 
             0- Salir
             """;
@@ -50,45 +47,27 @@ public class Principal {
             keyboard.nextLine();
             switch (userSelection) {
                 case 1:
-                    System.out.println("Buscar serie");
+                    System.out.println("Buscar libro por titulo");
                     //Search a book and save it in the db
                     searchABook();
                     break;
                 case 2:
-                    System.out.println("Buscar episodio");
+                    System.out.println("Listar libros registrados");
                     //searchEpisodesBySerie();
                     break;
                 case 3:
-                    System.out.println("Mostrar series buscadas");
+                    System.out.println("Listar autores registrados");
                     //showSearchedSeries();
                     break;
                 case 4:
-                    System.out.println("Buscar serie por titulo");
+                    System.out.println("Listar autores vivos en determinado año");
                     //searchSerieByTitle();
                     break;
 
                 case 5:
-                    System.out.println("Buscar Top 5 Series mejor evaluadas");
+                    System.out.println("Listar libros por idioma");
                     //searchTop5Series();
                     break;
-                case 6:
-                    System.out.println("Buscar serie por categoria");
-                    //searchByCategory();
-                    break;
-
-                case 7:
-                    System.out.println("Filtrar episodios por calificación de temporada y evaluación");
-                    //filterSeriesBySeasonAndEvaluation();
-                    break;
-                case 8:
-                    System.out.println("Buscar episodio por nombre");
-                    //searchEpisodeByName();
-                    break;
-                case 9:
-                    System.out.println("Buscar top 5 mejores episodios por serie");
-                    //searchTop5EpisodesPerSerie();
-                    break;
-
 
                 case 0:
                     System.out.println("Saliendo de la app...");
