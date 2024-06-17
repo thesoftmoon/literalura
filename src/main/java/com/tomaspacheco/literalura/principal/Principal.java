@@ -1,15 +1,19 @@
 package com.tomaspacheco.literalura.principal;
 
+import com.tomaspacheco.literalura.model.BookData;
+import com.tomaspacheco.literalura.model.BooksData;
+import com.tomaspacheco.literalura.repository.BookRepository;
+import com.tomaspacheco.literalura.service.ApiConsumption;
+import com.tomaspacheco.literalura.service.DataConvertion;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
-    //ApiConsumption apiConsumption = new ApiConsumption();
-    //DataConvertion dataConvertion = new DataConvertion();
-    private final String BASE_URL = "https://www.omdbapi.com/";
-    private final String API_KEY = "?apikey=bf49979c";
-    private final String SEARCH_PARAMETER = "&t=";
-    private final String SEASON_PARAMETER = "&Season=";
+    ApiConsumption apiConsumption = new ApiConsumption();
+    DataConvertion dataConvertion = new DataConvertion();
+    private final String BASE_URL = "https://gutendex.com/books/";
+    private final String SEARCH_PARAMETER = "?search=";
     //private List<Serie> series;
     //Optional<Serie> searchedSerie;
 
@@ -31,11 +35,11 @@ public class Principal {
 
     /*private List<SerieData> serieData = new ArrayList<>();*/
 
-    /*private SerieRepository serieRepository;*/
+    private BookRepository bookRepository;
 
-    /*public Principal(SerieRepository repository) {
-        this.serieRepository = repository;
-    }*/
+    public Principal(BookRepository repository) {
+        this.bookRepository = repository;
+    }
 
     public void showMenu() {
 
@@ -47,7 +51,8 @@ public class Principal {
             switch (userSelection) {
                 case 1:
                     System.out.println("Buscar serie");
-                    //searchWebSerie();
+                    //Search a book and save it in the db
+                    searchABook();
                     break;
                 case 2:
                     System.out.println("Buscar episodio");
@@ -89,6 +94,25 @@ public class Principal {
                     System.out.println("Saliendo de la app...");
                     exit = true;
             }
+        }
+    }
+
+    private void searchABook(){
+        System.out.println("Escribe el titulo a buscar:");
+        String titleToSearch = keyboard.nextLine();
+        //keyboard.nextLine();
+        System.out.println(titleToSearch);
+        var json = apiConsumption.getData(BASE_URL + SEARCH_PARAMETER + titleToSearch.replace(" ", "%20"));
+        System.out.println(json);
+        var searchData = dataConvertion.getData(json, BooksData.class);
+        Optional<BookData> searchedBook = searchData.results().stream()
+                .filter(b -> b.title().toUpperCase().contains(titleToSearch.toUpperCase()))
+                .findFirst();
+        if (searchedBook.isPresent()) {
+            System.out.println("Libro encontrado:");
+            System.out.println(searchedBook.get());
+        } else {
+            System.out.println("Libro no encontrado :(");
         }
     }
 
