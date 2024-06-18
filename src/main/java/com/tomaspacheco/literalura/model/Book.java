@@ -3,7 +3,6 @@ package com.tomaspacheco.literalura.model;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Entity
@@ -11,8 +10,7 @@ import java.util.stream.Collectors;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private Integer book_id;
+    private Long id;
     @Column(unique = false)
     private String title;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -20,20 +18,12 @@ public class Book {
     private List<String> languages;
     private Integer download_count;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getBook_id() {
-        return book_id;
-    }
-
-    public void setBook_id(Integer book_id) {
-        this.book_id = book_id;
     }
 
     public String getTitle() {
@@ -68,9 +58,11 @@ public class Book {
         this.authors = authors;
     }
 
+    public Book() {
+    }
+
     //Public Constructor
     public Book(BookData bookData) {
-        this.book_id = bookData.book_id();
         this.title = bookData.title();
         // here we can iterate in authordata array of authors to stream every author and add it to the db
         this.authors = bookData.authors().stream().map(authorData -> {
@@ -83,5 +75,15 @@ public class Book {
         }).collect(Collectors.toList());
         this.languages = bookData.languages();
         this.download_count = bookData.download_count();
+    }
+
+    @Override
+    public String toString() {
+        return
+                "Id: " + id +
+                ", Titulo: " + title +
+                ", Autores: " + authors +
+                ", Lenguajes: " + languages +
+                ", Numero de descargas: " + download_count;
     }
 }

@@ -13,8 +13,6 @@ public class Principal {
     DataConvertion dataConvertion = new DataConvertion();
     private final String BASE_URL = "https://gutendex.com/books/";
     private final String SEARCH_PARAMETER = "?search=";
-    //private List<Serie> series;
-    //Optional<Serie> searchedSerie;
 
 
     Scanner keyboard = new Scanner(System.in);
@@ -28,8 +26,6 @@ public class Principal {
 
             0- Salir
             """;
-
-    /*private List<SerieData> serieData = new ArrayList<>();*/
 
     private BookRepository bookRepository;
 
@@ -47,27 +43,23 @@ public class Principal {
             switch (userSelection) {
                 case 1:
                     System.out.println("Buscar libro por titulo");
-                    //Search a book and save it in the db
-                    //searchABook();
-
                     searchAndSaveABook();
                     break;
                 case 2:
                     System.out.println("Listar libros registrados");
-                    //searchEpisodesBySerie();
+                    showAllBooks();
                     break;
                 case 3:
                     System.out.println("Listar autores registrados");
-                    //showSearchedSeries();
+                    showAllAuthors();
                     break;
                 case 4:
                     System.out.println("Listar autores vivos en determinado año");
-                    //searchSerieByTitle();
+                    showAllAuthorsAliveInCertainYear();
                     break;
 
                 case 5:
                     System.out.println("Listar libros por idioma");
-                    //searchTop5Series();
                     break;
 
                 case 0:
@@ -77,37 +69,16 @@ public class Principal {
         }
     }
 
-    private void searchABook(){
-        System.out.println("Escribe el titulo a buscar:");
-        String titleToSearch = keyboard.nextLine();
-        //keyboard.nextLine();
-        System.out.println(titleToSearch);
-        var json = apiConsumption.getData(BASE_URL + SEARCH_PARAMETER + titleToSearch.replace(" ", "%20"));
-        System.out.println(json);
-        var searchData = dataConvertion.getData(json, BooksData.class);
-        Optional<BookData> searchedBook = searchData.results().stream()
-                .filter(b -> b.title().toUpperCase().contains(titleToSearch.toUpperCase()))
-                .findFirst();
-        if (searchedBook.isPresent()) {
-            System.out.println("Libro encontrado:");
-            System.out.println(searchedBook.get());
-
-
-        } else {
-            System.out.println("Libro no encontrado :(");
-        }
-    }
-
     private BookData getBookData() {
         System.out.println("Escribe el nombre del libro que quieres buscar");
         String bookName = keyboard.nextLine();
         var json = apiConsumption.getData(BASE_URL + SEARCH_PARAMETER + bookName.replace(" ", "%20"));
         System.out.println(json);
 
-        // Deserializar el JSON en un BooksData
+        // Deserialize the JSON in a BooksData
         var booksData = dataConvertion.getData(json, BooksData.class);
 
-        // Buscar en la lista de resultados
+        //Search in the result list
         Optional<BookData> searchedBook = booksData.getResults().stream()
                 .filter(b -> b.title().toUpperCase().contains(bookName.toUpperCase()))
                 .findFirst();
@@ -126,118 +97,32 @@ public class Principal {
         Book book = new Book(newBookData);
         //Here we create the data in the DB
         bookRepository.save(book);
-        System.out.println("Esta es la data guardada: " + newBookData);
+        System.out.println("Libro encontrado: " + book.getTitle().toUpperCase());
     }
 
-    /*private void searchEpisodesBySerie() {
+    private void showAllBooks() {
+        List<Book> books = bookRepository.getAllBooks();
+        System.out.println("Libros registrados");
+        books.stream().map(Book::toString).forEach(System.out::println);
+    }
 
-        showSearchedSeries();
-        System.out.println("Escribe el el nombre de la serie de la cual quieres ver los episodios");
-        var serieName = keyboard.nextLine();
+    private void showAllAuthors() {
+        List<Author> authors = bookRepository.getAllAuthors();
+        System.out.println("Autores registrados:");
+        authors.stream().map(Author::toString).forEach(System.out::println);
+    }
 
-        Optional<Serie> serie = series.stream()
-                .filter(s -> s.getTitulo().toLowerCase().contains(serieName.toLowerCase()))
-                .findFirst();
-
-        if (serie.isPresent()) {
-            var findedSerie = serie.get();
-            List<SeasonData> seasons = new ArrayList<>();
-            for (int i = 1; i <= findedSerie.getTotalTemporadas(); i++) {
-                var json = apiConsumption.getData(BASE_URL + API_KEY + SEARCH_PARAMETER + findedSerie.getTitulo().replace(" ", "+") + SEASON_PARAMETER + i);
-                var seasonData = dataConvertion.getData(json, SeasonData.class);
-                seasons.add(seasonData);
-            }
-            seasons.forEach(System.out::println);
-            List<Episode> episodes = seasons.stream()
-                    .flatMap(d -> d.episodes().stream()
-                            .map(e -> new Episode(d.season(), e)))
-                    .collect(Collectors.toList());
-            findedSerie.setEpisodes(episodes);
-            serieRepository.save(findedSerie);
+    private void showAllAuthorsAliveInCertainYear() {
+        System.out.println("Ingresa el año: ");
+        Integer year = keyboard.nextInt();
+        List<Author> authors = bookRepository.getAllAuthorsAliveInDeterminedYear(year);
+        if (authors.isEmpty()) {
+            System.out.println("No hay autores vivos en este año");
         } else {
-            System.out.println("error");
+            System.out.println("Autores Vivos:");
+            authors.stream().map(Author::toString).forEach(System.out::println);
         }
+    }
 
-    }*/
 
-    /*private void searchWebSerie() {
-        SerieData newSerieData = getSerieData();
-        Serie serie = new Serie(newSerieData);
-        //Here we create the data in the DB
-        serieRepository.save(serie);
-        //serieData.add(newSerieData);
-        System.out.println(newSerieData);
-    }*/
-
-    /*private void showSearchedSeries() {
-        //We need to add a public constructor to the Object in this case Serie for make queries to DB with JPA
-        series = serieRepository.findAll();
-        series.stream()
-                .sorted(Comparator.comparing(Serie::getGenero))
-                .forEach(System.out::println);
-    }*/
-
-    /*private void searchSerieByTitle() {
-        System.out.println("Escribe el titulo de la serie que deseas buscar");
-        var serieName = keyboard.nextLine();
-
-        searchedSerie = serieRepository.findByTituloContainsIgnoreCase(serieName);
-
-        if (searchedSerie.isPresent()) {
-            System.out.println("La serie buscada es: " + searchedSerie.get());
-        } else {
-            System.out.println("Serie no encontrada :(");
-        }
-    }*/
-
-    /*private void searchTop5Series() {
-        List<Serie> topSeries = serieRepository.findTop5ByOrderByEvaluacionDesc();
-        topSeries.forEach(s ->
-                System.out.println("Serie: " + s.getTitulo() + " Evaluacion: " + s.getEvaluacion()));
-    }*/
-
-    /*private void searchByCategory() {
-        System.out.println("Escribe la categoria que quieres buscar");
-        var categoryType = keyboard.nextLine();
-
-        var category = Category.fromSpanish(categoryType);
-
-        List<Serie> seriesPerCategory = serieRepository.findByGenero(category);
-
-        System.out.println("Las series encontradas de la categoria: " + categoryType);
-        seriesPerCategory.forEach(System.out::println);
-
-    }*/
-
-    /*private void filterSeriesBySeasonAndEvaluation() {
-        System.out.println("¿Filtrar séries con cuántas temporadas? ");
-        var totalTemporadas = keyboard.nextInt();
-        keyboard.nextLine();
-        System.out.println("¿Com evaluación apartir de cuál valor? ");
-        var evaluacion = keyboard.nextDouble();
-        keyboard.nextLine();
-        List<Serie> filtroSeries = serieRepository.findByTotalTemporadasLessThanEqualAndEvaluacionGreaterThanEqual(totalTemporadas, evaluacion);
-        System.out.println("*** Series filtradas ***");
-        filtroSeries.forEach(s ->
-                System.out.println(s.getTitulo() + "  - evaluacion: " + s.getEvaluacion()));
-    }*/
-
-    /*private void searchEpisodeByName() {
-        System.out.println("Escribe el nombre o parte del nombre del episodio");
-        var episodeNameToSearch = keyboard.nextLine();
-        List<Episode> findedEpisodes = serieRepository.episodesPerName(episodeNameToSearch);
-        findedEpisodes.forEach(e ->
-                System.out.printf("Serie: %s Temporada: %s Episodio: %s Evaluación: %s\n", e.getSerie().getTitulo(), e.getSeason(), e.getEpisodeNumber(), e.getEvaluation()));
-    }*/
-
-    /*private void searchTop5EpisodesPerSerie() {
-        searchSerieByTitle();
-
-        if (searchedSerie.isPresent()) {
-            Serie serie = searchedSerie.get();
-            List<Episode> topEpisodes = serieRepository.top5BestEpisodes(serie);
-            topEpisodes.forEach(e ->
-                    System.out.printf("Serie: %s Temporada: %s Episodio: %s Evaluación: %s\n", e.getSerie().getTitulo(), e.getSeason(), e.getTitle(), e.getEvaluation()));
-        }
-    }*/
 }

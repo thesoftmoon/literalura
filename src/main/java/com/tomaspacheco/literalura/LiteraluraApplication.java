@@ -8,20 +8,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LiteraluraApplication implements CommandLineRunner{
-	@Autowired
-	//Dependency injection
-	private BookRepository repository;
-	public static void main(String[] args) {
-		SpringApplication.run(LiteraluraApplication.class, args);
-	}
+public class LiteraluraApplication implements CommandLineRunner {
+    @Autowired
+    //Dependency injection
+    private BookRepository repository;
 
-	@Override
-	public void run(String... args) throws Exception {
-		System.out.println("Main app loaded");
-		Principal principal = new Principal(repository);
-		principal.showMenu();
+    public static void main(String[] args) {
+        SpringApplication.run(LiteraluraApplication.class, args);
+    }
 
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("Main app loaded");
+        Principal principal = new Principal(repository);
+        principal.showMenu();
+    }
 
 }
