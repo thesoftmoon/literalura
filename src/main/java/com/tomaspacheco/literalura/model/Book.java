@@ -3,6 +3,8 @@ package com.tomaspacheco.literalura.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "books")
@@ -56,5 +58,30 @@ public class Book {
 
     public void setDownload_count(Integer download_count) {
         this.download_count = download_count;
+    }
+
+    public List<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
+    }
+
+    //Public Constructor
+    public Book(BookData bookData) {
+        this.book_id = bookData.book_id();
+        this.title = bookData.title();
+        // here we can iterate in authordata array of authors to stream every author and add it to the db
+        this.authors = bookData.authors().stream().map(authorData -> {
+            Author author = new Author();
+            author.setName(authorData.name());
+            author.setBirth_year(authorData.birth_year());
+            author.setDeath_year(authorData.death_year());
+            author.setBook(this); // Establece la asociación con el libro
+            return author;
+        }).collect(Collectors.toList());
+        this.languages = bookData.languages();
+        this.download_count = bookData.download_count();
     }
 }

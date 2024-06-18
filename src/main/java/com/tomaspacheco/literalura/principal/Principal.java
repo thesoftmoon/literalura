@@ -1,7 +1,6 @@
 package com.tomaspacheco.literalura.principal;
 
-import com.tomaspacheco.literalura.model.BookData;
-import com.tomaspacheco.literalura.model.BooksData;
+import com.tomaspacheco.literalura.model.*;
 import com.tomaspacheco.literalura.repository.BookRepository;
 import com.tomaspacheco.literalura.service.ApiConsumption;
 import com.tomaspacheco.literalura.service.DataConvertion;
@@ -49,7 +48,9 @@ public class Principal {
                 case 1:
                     System.out.println("Buscar libro por titulo");
                     //Search a book and save it in the db
-                    searchABook();
+                    //searchABook();
+
+                    searchAndSaveABook();
                     break;
                 case 2:
                     System.out.println("Listar libros registrados");
@@ -90,19 +91,43 @@ public class Principal {
         if (searchedBook.isPresent()) {
             System.out.println("Libro encontrado:");
             System.out.println(searchedBook.get());
+
+
         } else {
             System.out.println("Libro no encontrado :(");
         }
     }
 
-    /*private SerieData getSerieData() {
-        System.out.println("Escribe el nombre de la serie que quieres buscar");
-        //Search general data of the serie
-        String serieName = keyboard.nextLine();
-        var json = apiConsumption.getData(BASE_URL + API_KEY + SEARCH_PARAMETER + serieName.replace(" ", "+"));
-        var data = dataConvertion.getData(json, SerieData.class);
-        return data;
-    }*/
+    private BookData getBookData() {
+        System.out.println("Escribe el nombre del libro que quieres buscar");
+        String bookName = keyboard.nextLine();
+        var json = apiConsumption.getData(BASE_URL + SEARCH_PARAMETER + bookName.replace(" ", "%20"));
+        System.out.println(json);
+
+        // Deserializar el JSON en un BooksData
+        var booksData = dataConvertion.getData(json, BooksData.class);
+
+        // Buscar en la lista de resultados
+        Optional<BookData> searchedBook = booksData.getResults().stream()
+                .filter(b -> b.title().toUpperCase().contains(bookName.toUpperCase()))
+                .findFirst();
+
+        if (searchedBook.isPresent()) {
+            System.out.println(searchedBook.get());
+            return searchedBook.get();
+        } else {
+            System.out.println("Libro no encontrado :(");
+            return null;
+        }
+    }
+
+    private void searchAndSaveABook() {
+        BookData newBookData = getBookData();
+        Book book = new Book(newBookData);
+        //Here we create the data in the DB
+        bookRepository.save(book);
+        System.out.println("Esta es la data guardada: " + newBookData);
+    }
 
     /*private void searchEpisodesBySerie() {
 

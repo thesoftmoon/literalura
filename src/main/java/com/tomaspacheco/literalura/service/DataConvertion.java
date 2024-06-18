@@ -1,6 +1,7 @@
 package com.tomaspacheco.literalura.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DataConvertion implements IDataConvert {

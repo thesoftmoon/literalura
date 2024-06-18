@@ -9,4 +9,11 @@ public record BooksData(
         Integer count,
         List<BookData> results
 ) {
+    public List<BookData> getResults() {
+        return results;
+    }
+
+    /*public void setResults(List<BookData> results) {
+        this.results = results;
+    }*/
 }
