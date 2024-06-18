@@ -60,6 +60,7 @@ public class Principal {
 
                 case 5:
                     System.out.println("Listar libros por idioma");
+                    showBookByLanguage();
                     break;
 
                 case 0:
@@ -123,6 +124,35 @@ public class Principal {
             authors.stream().map(Author::toString).forEach(System.out::println);
         }
     }
+
+    /*private void showBookByLanguage() {
+        System.out.println("Selecciona un idioma: ");
+        String language = keyboard.next();
+        List<Book> books = bookRepository.getAllBooks();
+
+        List<Book> filteredBooks = books.stream()
+                .filter(book -> book.getLanguages().contains(language))
+                .collect(Collectors.toList());
+        if (filteredBooks.isEmpty()) {
+            System.out.println("No hay libros en ese idioma");
+        } else {
+            System.out.println("Libros en el idioma:");
+            filteredBooks.stream().map(Book::toString).forEach(System.out::println);
+        }
+    }*/
+
+    private void showBookByLanguage() {
+        System.out.println("Selecciona un idioma: ");
+        String language = keyboard.next();
+        List<Book> books = bookRepository.findByLanguage(language);
+        if (books.isEmpty()) {
+            System.out.println("No hay libros en ese idioma");
+        } else {
+            System.out.println("Libros en el idioma: ");
+            books.stream().map(Book::toString).forEach(System.out::println);
+        }
+    }
+
 
 
 }
